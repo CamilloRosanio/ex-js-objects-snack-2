@@ -172,10 +172,10 @@ const chefQ6 = {
 /*
 Qual è il metodo migliore per clonare l’oggetto chef, e perché?
 */
-// RISPOSTA: una SHALLOW COPY dei valori primitivi, e una SHALLOW COPY a parte del valore complesso che però contiene due funzioni.
+// RISPOSTA: SHALLOW COPIES nidificate.
 const cloneChefQ6 = {
     ...chefQ6,
-    restaurant: { ...chefQ6.restaurant },
+    restaurant: { ...chefQ6.restaurant, address: { ...chefQ6.restaurant.address } },
 }
 
 
@@ -188,22 +188,42 @@ const cloneChefQ6 = {
 /*
 Crea una funzione che permette la copia profonda (deep copy) di un oggetto, che copia anche i suoi metodi (proprietà che contengono funzioni). Usa l’oggetto di Code Question 6 come test.
 ⚠️ Serve usare una funzione ricorsiva! (fai un po’ di ricerca).
+
+COS'E' UNA FUNZIONE RICORSIVA?
+E' una funzione che richiama sè stessa al suo interno, permettendo un ciclo.
 */
 
 // STEP
 /*
 Siccome, nonostante usiamo come test l'Object della QUESTION 6, l'Object passato come argument potrebbe cambiare,
 bisogna creare una funzione che si adatti a qualsiasi Object.
-(1) il primo passo è stilare una lista delle KEYS, a prescindere dal numero
-(2) il secondo passo è verificare se ogni KEY racchiuda un valore PRIMITIVO o COMPLESSO.
-(3) il terzo passo è utilizzare il metodo di copia migliore in base al tipo di KEY.
-(4) L'ultimo step è restituire il nuovo oggetto copiato.
+(0) Devo controllare se il typeof è un OBJECT
+(1) Devo stilare una lista delle KEYS, a prescindere dal numero
+(2) Poi verificare se ogni KEY racchiuda un valore PRIMITIVO o COMPLESSO.
+(3) Poi utilizzare il metodo di copia migliore in base al tipo di KEY.
+(4) Dopo restituire il nuovo oggetto copiato.
 */
 
 function deepCopy(object) {
-    null;
+    if (typeof (object) !== 'object') {
+        return object;
+    }
+
+    const copy = {};
+
+    // Con questo scorro le KEYS di un Object
+    for (const key in object) {
+        const value = object[key];
+        if (typeof value !== 'object') {
+            copy[key] = object[key];
+        } else {
+            // Invoco la funzione stessa al suo interno
+            copy[key] = deepCopy(value)
+        }
+    }
+
+    return copy;
 }
 
-console.log(chefQ6);
-const cloneObject = structuredClone(chefQ6);
-console.log(cloneObject);
+const chefQ6Copy = deepCopy(chefQ6);
+console.log(chefQ6Copy);
